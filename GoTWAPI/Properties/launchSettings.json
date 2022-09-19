@@ -1,0 +1,21 @@
+{
+  "profiles": {
+    "GoTWAPI": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "VaultUri": "https://gotwvault.vault.azure.net/",
+        "AZURE_USERNAME": "marcello.iacone@sarasin.co.uk"
+      },
+      "applicationUrl": "http://localhost:52017"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "publishAllPorts": true,
+      "useSSL": false
+    }
+  }
+}

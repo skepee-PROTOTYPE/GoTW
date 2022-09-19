@@ -1,0 +1,62 @@
+﻿@page "/commandersSkill/{Skill}"
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@inject IHttpClientFactory ClientFactory
+
+@if (AllCommanders == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    foreach (var commtype in AllCommanders.CommanderTypes)
+    {
+        var cskills = AllCommanders.CommanderSkills.Where(x => x.Type.Equals(commtype.Name));
+        var comms = cskills.CommanderSkillDetail();
+
+        <CommanderIconGrid Commanders="@comms" CommanderType="@commtype"></CommanderIconGrid>
+    }
+}
+
+
+@code {
+    [Parameter]
+    public string Skill { get; set; } = string.Empty;
+
+    private GoTWBlaSe.Model.CommandersDTO AllCommanders;
+
+    //protected override async Task OnParametersSetAsync()
+    //{
+    //    AllCommanders = await Http.GetCommanderSkills(Skill);
+    //}
+
+    private bool shouldRender;
+
+    protected override bool ShouldRender() => shouldRender;
+
+    protected override async Task OnInitializedAsync()
+    {
+        //AllCommanders = await Http.GetCommanderSkills(Skill);
+        //CommandersDTO commanders = new CommandersDTO();
+
+        string address = $"{Helper.apiAddress}api/commanders/{Skill}";
+
+        var request = new HttpRequestMessage(HttpMethod.Get, address);
+
+        //var request = new HttpRequestMessage(HttpMethod.Get,"https://api.github.com/repos/dotnet/AspNetCore.Docs/branches");
+        //request.Headers.Add("Accept", "application/vnd.github.v3+json");
+        //request.Headers.Add("User-Agent", "HttpClientFactory-Sample");
+
+        var client = ClientFactory.CreateClient();
+
+        var response = await client.SendAsync(request);
+
+        if (response.IsSuccessStatusCode)
+        {
+            using var responseStream = await response.Content.ReadAsStreamAsync();
+            AllCommanders = await JsonSerializer.DeserializeAsync<GoTWBlaSe.Model.CommandersDTO>(responseStream).ConfigureAwait(false);
+        }
+
+        shouldRender = true;
+    }
+}
